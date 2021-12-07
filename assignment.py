@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from matplotlib import pyplot as plt
-from preprocess import get_data
+# from preprocess import get_data
+from separate_images import get_data
 from convolution import conv2d
 
 import os
@@ -256,6 +257,8 @@ def main():
     '''
     train_inputs, train_labels = get_data('../../data/train', 3, 5)
     test_inputs, test_labels = get_data('../../data/test', 3, 5)
+
+    train_inputs, train_labels, test_inputs, test_labels = get_data()
 
     model = Model()
 
