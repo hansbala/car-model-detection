@@ -1,18 +1,24 @@
 from glob import glob
 from PIL import Image
+import PIL
 import numpy as np
 import os
 import random
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
 
 # separate into train and test dataset
 DIR = './toyota_image_dataset_v2/toyota_cars/'
 TEST_RATIO = 0.13
+FOLDER_CNT = 5
 
 def split_dataset():
     test_files = []
     train_files = []
     # iterate over all folders
     car_directories = glob(DIR + "*/")
+    curr_count = 0
     for directory in car_directories:
         files = glob(directory + '*.jpg')
         # pick like 70 images from each folder for test, rest train
@@ -21,6 +27,9 @@ def split_dataset():
         # add it to the master lists
         test_files.extend(curr_test_set)
         train_files.extend(curr_train_set)
+        curr_count += 1
+        if curr_count == FOLDER_CNT - 1:
+            break
     # now that we have the split files, return as tuple
     return (train_files, test_files)
 
@@ -34,25 +43,37 @@ def get_model_name(model_file_path):
 def assign_labels(dataset):
     labels = []
     images = []
+    img_size = (180, 180)
     for file_path in dataset:
         # get the label from the image
         car_name = get_model_name(file_path)
         # open the image and convert to numpy array
-        img = Image.open(file_path)
-        np_img = np.array(img)
-        # rescale numpy array
-        np_img = np.reshape(np_img, (-1, 3, 32, 32))
-        np_img = np.transpose(np_img, (0, 2, 3, 1))
-        np_img = (np_img / 255).astype(np.float32)
+        try:
+            # img = Image.open(file_path)
+            # np_img = np.array(img)
+            # rescale numpy array
+            # np_img = np.reshape(np_img, (-1, 3, 32, 32))
+            # np_img = np.transpose(np_img, (0, 2, 3, 1))
+            # np_img = (np_img / 255).astype(np.float32)
+            img = keras.preprocessing.image.load_img(file_path, target_size=img_size)
+            img_array = keras.preprocessing.image.img_to_array(img)
+            # img_array = tf.expand_dims(img_array, 0)
+        except:
+            continue
         # store the label and image
         labels.append(car_name)
-        images.append(np_img)
+        # images.append(np_img)
+        images.append(img_array)
     return (images, labels)
 
 def get_data():
     train_set, test_set = split_dataset()
+    print('Successfully split dataset')
     train_imgs, train_labels = assign_labels(train_set)
+    print('Successfully assigned labels to training set')
     test_imgs, test_labels = assign_labels(test_set)
+    print('Successfully assigned labels to testing set')
+    print('Preprocessing done')
     return (train_imgs, train_labels, test_imgs, test_labels)
 
 #######################
