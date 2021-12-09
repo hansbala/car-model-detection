@@ -26,7 +26,7 @@ class Model(tf.keras.Model):
         # TODO: Initialize all hyperparameters
         self.learning_rate = 1e-3 # TODO: Maybe some more finetuning is needed here?
         self.optimizer = tf.keras.optimizers.Adam(self.learning_rate)
-        self.num_epochs = 10
+        self.num_epochs = 50
 
         # Layer = [Filter Number, stride size, pool ksize, pool stride length]
         self.layer1_params = [32, 1, 2, 2]
@@ -263,7 +263,7 @@ def main():
     print('size')
     print(len(train_inputs))
     print(len(test_inputs))
-    
+
     model = Model()
 
     for epoch in range(0, model.num_epochs):
