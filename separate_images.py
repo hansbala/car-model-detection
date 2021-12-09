@@ -11,7 +11,6 @@ import cv2
 # separate into train and test dataset
 DIR = './toyota_image_dataset_v2/toyota_cars/'
 TEST_RATIO = 0.13
-# FOLDER_CNT = 7
 
 def split_dataset():
     test_files = []
@@ -28,8 +27,6 @@ def split_dataset():
         test_files.extend(curr_test_set)
         train_files.extend(curr_train_set)
         curr_count += 1
-        # if curr_count == FOLDER_CNT - 1:
-        #     break
     # now that we have the split files, return as tuple
     return (train_files, test_files)
 
@@ -50,7 +47,7 @@ def get_model_name(model_file_path):
 def assign_labels(dataset):
     labels = []
     images = []
-    img_size = (32, 32)
+    img_size = (128, 128)
     for file_path in dataset:
         # get the label from the image
         car_name = get_model_name(file_path)
@@ -78,19 +75,3 @@ def get_data():
     print('Successfully assigned labels to testing set')
     print('Preprocessing done')
     return (train_imgs, train_labels, test_imgs, test_labels)
-
-#######################
-##  ONLY FOR TESTING ##
-#######################
-#######################
-
-
-def main():
-    train_set, test_set = split_dataset()
-    assign_labels(train_set)
-
-if __name__ == '__main__':
-    main()
-#######################
-#######################
-#######################

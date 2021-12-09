@@ -29,15 +29,15 @@ class Model(tf.keras.Model):
         self.num_epochs = 50
 
         # Layer = [Filter Number, stride size, pool ksize, pool stride length]
-        self.layer1_params = [32, 1, 2, 2]
-        self.layer2_params = [128, 1, 2, 2]
+        self.layer1_params = [128, 1, 2, 2]
+        self.layer2_params = [156, 1, 2, 2]
         self.layer3_params = [200, 1, 2, 2]
         self.layer4_params = [256, 1, 2, 2]
 
-        self.flatten_width = 1024
-        self.dense1_output_width = 64
-        self.dense2_output_width = 32
-        self.dense3_output_width = 16
+        self.flatten_width = 16384
+        self.dense1_output_width = 8192
+        self.dense2_output_width = 4096
+        self.dense3_output_width = 1024
 
         # TODO: Initialize all trainable parameters
         self.filter1 = tf.Variable(tf.random.truncated_normal([3, 3, 3, self.layer1_params[0]], stddev=0.1))
