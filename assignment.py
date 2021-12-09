@@ -141,6 +141,7 @@ def train(model, train_inputs, train_labels):
     indices = tf.random.shuffle(tf.range(0, len(train_inputs)))
     train_inputs = tf.gather(train_inputs, indices)
     train_labels = tf.gather(train_labels, indices)
+    all_losses = []
     i = 0
     print(len(train_inputs))
     while i < int(len(train_inputs) / model.batch_size):
@@ -152,7 +153,7 @@ def train(model, train_inputs, train_labels):
         with tf.GradientTape() as tape:
             logits = model.call(inp)
             loss = model.loss(logits, lab)
-
+            all_losses.append(loss)
             if i % 32 == 0:
                 train_acc = model.accuracy(logits, lab)
                 print("Accuracy on training set after {} images: {}".format(model.batch_size * i, train_acc))
@@ -160,6 +161,7 @@ def train(model, train_inputs, train_labels):
         gradients = tape.gradient(loss, model.trainable_variables)
         model.optimizer.apply_gradients(zip(gradients, model.trainable_variables))
         i += 1
+    return all_losses
 
 def test(model, test_inputs, test_labels):
     """
@@ -192,7 +194,7 @@ def visualize_loss(losses):
     plt.title('Loss per batch')
     plt.xlabel('Batch')
     plt.ylabel('Loss')
-    plt.show()  
+    plt.savefig('losses.png')
 
 
 def visualize_results(image_inputs, probabilities, image_labels, first_label, second_label):
@@ -263,17 +265,19 @@ def main():
     print('size')
     print(len(train_inputs))
     print(len(test_inputs))
-
+    master_losses = []
     model = Model()
 
     for epoch in range(0, model.num_epochs):
         print("\n-------------EPOCH {}-------------".format(epoch + 1))
-        train(model, train_inputs, train_labels)
+        losses = train(model, train_inputs, train_labels)
+        master_losses.extend(losses)
     print("\n-------------ALL EPOCHS END-------------\n")
 
     test_accuracy = test(model, test_inputs, test_labels)
     print("Accuracy on test set: {}".format(test_accuracy))
 
+    visualize_loss(master_losses)
     # visualize 10 images
     # sample_inputs = test_inputs[0:10]
     # sample_labels = test_labels[0:10]
