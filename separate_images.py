@@ -1,17 +1,17 @@
 from glob import glob
 from PIL import Image
-import PIL
 import numpy as np
 import os
 import random
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import cv2
 
 # separate into train and test dataset
 DIR = './toyota_image_dataset_v2/toyota_cars/'
 TEST_RATIO = 0.13
-FOLDER_CNT = 5
+# FOLDER_CNT = 7
 
 def split_dataset():
     test_files = []
@@ -28,42 +28,45 @@ def split_dataset():
         test_files.extend(curr_test_set)
         train_files.extend(curr_train_set)
         curr_count += 1
-        if curr_count == FOLDER_CNT - 1:
-            break
+        # if curr_count == FOLDER_CNT - 1:
+        #     break
     # now that we have the split files, return as tuple
     return (train_files, test_files)
 
 
 def get_model_name(model_file_path):
+    # master_labels = ['aygo', 'avanza', '4runner', 'avensis', 'alphard', 'camry', 'avalon']
+    # master_labels = ['aygo', 'avanza']
+    master_labels = ['crown', 'hilux', 'vitz', 'hiace', 'corona', 'aygo', 'avanza', '4runner', 'vios', 'sequoia', 'avensis', 'supra', 'sienna', 'etios', 'prius', 'rush', 'previa', 'innova', 'highlander', 'revo', 'tacoma', 'alphard', 'starlet', 'mirai', 'tundra', 'venza', 'yaris', 'iq', 'estima', 'soarer', 'verso', 'matrix', 'camry', 'avalon', 'rav4', 'celica', 'corolla', 'fortuner']
     slash_pos = model_file_path.rfind('/')
     dash_pos = model_file_path.rfind('-')
-    return model_file_path[slash_pos + 1 : dash_pos]
+    curr_car_name = model_file_path[slash_pos + 1 : dash_pos]
+    curr_labels = [0] * len(master_labels)
+    index = master_labels.index(curr_car_name)
+    curr_labels[index] = 1
+    return curr_labels
 
 # TODO: Open and store the image inside each tuple
 def assign_labels(dataset):
     labels = []
     images = []
-    img_size = (180, 180)
+    img_size = (32, 32)
     for file_path in dataset:
         # get the label from the image
         car_name = get_model_name(file_path)
         # open the image and convert to numpy array
         try:
-            # img = Image.open(file_path)
-            # np_img = np.array(img)
-            # rescale numpy array
-            # np_img = np.reshape(np_img, (-1, 3, 32, 32))
-            # np_img = np.transpose(np_img, (0, 2, 3, 1))
-            # np_img = (np_img / 255).astype(np.float32)
-            img = keras.preprocessing.image.load_img(file_path, target_size=img_size)
-            img_array = keras.preprocessing.image.img_to_array(img)
-            # img_array = tf.expand_dims(img_array, 0)
+            img = cv2.imread(file_path)
+            img_resized = cv2.resize(img, dsize=img_size, interpolation=cv2.INTER_CUBIC)
+            img_list = img_resized.tolist()
         except:
             continue
         # store the label and image
         labels.append(car_name)
-        # images.append(np_img)
-        images.append(img_array)
+        images.append(img_list)
+    labels = tf.convert_to_tensor(labels, dtype=tf.float32)
+    images = np.array(images)
+    images = (images / 255).astype(np.float32)
     return (images, labels)
 
 def get_data():

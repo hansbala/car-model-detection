@@ -19,8 +19,8 @@ class Model(tf.keras.Model):
         """
         super(Model, self).__init__()
 
-        self.batch_size = 200
-        self.num_classes = 2
+        self.batch_size = 32
+        self.num_classes = 38
         self.loss_list = [] # Append losses to this list in training so you can visualize loss vs time in main
 
         # TODO: Initialize all hyperparameters
@@ -138,13 +138,14 @@ def train(model, train_inputs, train_labels):
     shape (num_labels, num_classes)
     :return: Optionally list of losses per batch to use for visualize_loss
     '''
-    indices = tf.random.shuffle(tf.range(0, train_inputs.shape[0]))
+    indices = tf.random.shuffle(tf.range(0, len(train_inputs)))
     train_inputs = tf.gather(train_inputs, indices)
     train_labels = tf.gather(train_labels, indices)
     i = 0
-    while i < int(train_inputs.shape[0] / model.batch_size):
+    print(len(train_inputs))
+    while i < int(len(train_inputs) / model.batch_size):
         start = i * model.batch_size
-        end = (i + 1) * model.batch_size if (i + 1) * model.batch_size <= train_inputs.shape[0] else train_inputs.shape[0]
+        end = (i + 1) * model.batch_size if (i + 1) * model.batch_size <= len(train_inputs) else len(train_inputs)
         inp = tf.image.random_flip_left_right(train_inputs[start: end])
         lab = train_labels[start: end]
 
@@ -152,7 +153,7 @@ def train(model, train_inputs, train_labels):
             logits = model.call(inp)
             loss = model.loss(logits, lab)
 
-            if i % 10 == 0:
+            if i % 32 == 0:
                 train_acc = model.accuracy(logits, lab)
                 print("Accuracy on training set after {} images: {}".format(model.batch_size * i, train_acc))
 
@@ -255,11 +256,14 @@ def main():
     
     :return: None
     '''
-    train_inputs, train_labels = get_data('../../data/train', 3, 5)
-    test_inputs, test_labels = get_data('../../data/test', 3, 5)
+    # train_inputs, train_labels = get_data('../../data/train', 3, 5)
+    # test_inputs, test_labels = get_data('../../data/test', 3, 5)
 
     train_inputs, train_labels, test_inputs, test_labels = get_data()
-
+    print('size')
+    print(len(train_inputs))
+    print(len(test_inputs))
+    
     model = Model()
 
     for epoch in range(0, model.num_epochs):
