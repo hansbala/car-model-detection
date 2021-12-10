@@ -162,9 +162,11 @@ def main():
             layer.trainable = False 
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    seqModel = model.fit(train_ds, epochs = 50)
+    seqModel = model.fit(train_ds, epochs = 20)
     train_loss = seqModel.history['loss']
+    train_accuracy = seqModel.history['accuracy']
     print(train_loss)
+    print(train_accuracy)
 
 
 
