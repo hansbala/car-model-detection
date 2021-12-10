@@ -47,7 +47,7 @@ def get_model_name(model_file_path):
 def assign_labels(dataset):
     labels = []
     images = []
-    img_size = (128, 128)
+    img_size = (32, 32)
     for file_path in dataset:
         # get the label from the image
         car_name = get_model_name(file_path)

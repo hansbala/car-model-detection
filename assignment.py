@@ -29,15 +29,15 @@ class Model(tf.keras.Model):
         self.num_epochs = 50
 
         # Layer = [Filter Number, stride size, pool ksize, pool stride length]
-        self.layer1_params = [128, 1, 2, 2]
-        self.layer2_params = [156, 1, 2, 2]
+        self.layer1_params = [32, 1, 2, 2]
+        self.layer2_params = [128, 1, 2, 2]
         self.layer3_params = [200, 1, 2, 2]
         self.layer4_params = [256, 1, 2, 2]
 
-        self.flatten_width = 16384
-        self.dense1_output_width = 8192
-        self.dense2_output_width = 4096
-        self.dense3_output_width = 1024
+        self.flatten_width = 1024
+        self.dense1_output_width = 64
+        self.dense2_output_width = 32
+        self.dense3_output_width = 16
 
         # TODO: Initialize all trainable parameters
         self.filter1 = tf.Variable(tf.random.truncated_normal([3, 3, 3, self.layer1_params[0]], stddev=0.1))
@@ -196,6 +196,21 @@ def visualize_loss(losses):
     plt.ylabel('Loss')
     plt.savefig('losses.png')
 
+def visualize_acc(acc): 
+    """
+    Uses Matplotlib to visualize the losses of our model.
+    :param losses: list of loss data stored from train. Can use the model's loss_list 
+    field 
+    NOTE: DO NOT EDIT
+    :return: doesn't return anything, a plot should pop-up 
+    """
+    x = [i for i in range(len(acc))]
+    plt.plot(x, acc)
+    plt.title('Loss & Accuracy per batch')
+    plt.xlabel('Batch')
+    plt.ylabel('Loss & Accuracy per batch')
+    plt.savefig('results.png')
+
 
 def visualize_results(image_inputs, probabilities, image_labels, first_label, second_label):
     """
@@ -243,6 +258,10 @@ def visualize_results(image_inputs, probabilities, image_labels, first_label, se
     plotter(incorrect, 'Incorrect')
     plt.show()
 
+visualize_loss([2.2861695289611816, 1.6749050617218018, 1.454665184020996, 1.267021656036377, 1.1204314231872559, 0.9825139045715332, 0.899641215801239, 0.7968409061431885, 0.7199103832244873, 0.669446587562561, 0.5988848209381104, 0.5517948865890503, 0.5182223320007324, 0.47367769479751587, 0.41798844933509827, 0.40326058864593506, 0.35768988728523254, 0.34883254766464233, 0.32893165946006775, 0.3149438500404358])
+
+visualize_acc([0.3413141667842865, 0.48363927006721497, 0.5510774254798889, 0.5976323485374451, 0.6387336850166321, 0.6843575239181519, 0.7080340385437012, 0.7426177263259888, 0.7621707916259766, 0.7786645293235779, 0.8034051656723022, 0.8111199736595154, 0.8292099237442017, 0.8443735241889954, 0.8655227422714233, 0.868981122970581, 0.8826815485954285, 0.8866719603538513, 0.8918595314025879, 0.8955839276313782])
+
 
 def main():
     '''
@@ -285,5 +304,5 @@ def main():
     # visualize_results(sample_inputs, sample_logits, sample_labels, 'cat', 'dog')
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
