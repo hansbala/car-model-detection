@@ -19,7 +19,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 
-DIR = '../toyota_image_dataset_v2/toyota_cars/' #TODO: change according to 1/3 datasets 
+DIR = 'toyota_image_dataset_v2/toyota_cars/' #TODO: change according to 1/3 datasets 
 TEST_RATIO = 0.13
 FOLDER_CNT = 5
 NUM_CLASSES = 38 #TODO: change according to 1/3 datasets 
@@ -124,8 +124,8 @@ def main():
     img_size = (224,224)
     batch_size = 32
 
-    train_data_path = "../toyota_image_dataset_v2/toyota_cars_processed/train"
-    test_data_path = "../toyota_image_dataset_v2/toyota_cars_processed/test"
+    train_data_path = "toyota_image_dataset_v2/toyota_cars_processed/train"
+    test_data_path = "toyota_image_dataset_v2/toyota_cars_processed/test"
 
 
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(preprocessing_function=preprocess_input,
@@ -162,7 +162,11 @@ def main():
             layer.trainable = False 
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-    model.fit(train_ds, epochs = 50)
+    seqModel = model.fit(train_ds, epochs = 50)
+    train_loss = seqModel.history['loss']
+    print(train_loss)
+
+
 
     loss, accuracy = model.evaluate(test_ds, verbose=1)
     print('Validation loss:', loss)
