@@ -124,8 +124,9 @@ def main():
     img_size = (224,224)
     batch_size = 32
 
-    train_data_path = "../toyota_image_dataset_v2/toyota_cars_processed/train"
-    test_data_path = "../toyota_image_dataset_v2/toyota_cars_processed/test"
+    train_data_path = "./toyota_image_dataset_v2/toyota_cars_processed/train"
+    val_data_path = "./toyota_image_dataset_v2/toyota_cars_processed/val"
+    # test_data_path = "./toyota_image_dataset_v2/toyota_cars_processed/test"
 
 
     train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(preprocessing_function=preprocess_input,
@@ -142,12 +143,20 @@ def main():
                 class_mode= 'categorical',
                 subset='training')
 
-    test_ds = train_datagen.flow_from_directory(
-                test_data_path,
+    val_ds = train_datagen.flow_from_directory(
+                val_data_path,
                 target_size=img_size,
-                batch_size=1,
+                batch_size=batch_size,
                 class_mode= 'categorical',
                 subset='validation')
+
+
+    # test_ds = train_datagen.flow_from_directory(
+    #             test_data_path,
+    #             target_size=img_size,
+    #             batch_size=1,
+    #             class_mode= 'categorical',
+    #             subset='validation')
 
 
     base_model = ResNet50(include_top=False, weights='imagenet')
@@ -164,7 +173,7 @@ def main():
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model.fit(train_ds, epochs = 50)
 
-    loss, accuracy = model.evaluate(test_ds, verbose=1)
+    loss, accuracy = model.evaluate(val_ds, verbose=1)
     print('Validation loss:', loss)
     print('Validation accuracy:', accuracy)
 
