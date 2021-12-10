@@ -26,7 +26,7 @@ class Model(tf.keras.Model):
         # TODO: Initialize all hyperparameters
         self.learning_rate = 1e-3 # TODO: Maybe some more finetuning is needed here?
         self.optimizer = tf.keras.optimizers.Adam(self.learning_rate)
-        self.num_epochs = 50
+        self.num_epochs = 10
 
         # Layer = [Filter Number, stride size, pool ksize, pool stride length]
         self.layer1_params = [32, 1, 2, 2]
@@ -296,8 +296,15 @@ def main():
     test_accuracy = test(model, test_inputs, test_labels)
     print("Accuracy on test set: {}".format(test_accuracy))
 
-    print(master_losses)
-    print(master_acc)
+    res_losses = []
+    res_acc = []
+    for item in master_losses:
+        res_losses.append(item.numpy)
+    for item in master_acc:
+        res_acc.append(res_acc)
+
+    print(res_losses)
+    print(res_acc)
     # visualize 10 images
     # sample_inputs = test_inputs[0:10]
     # sample_labels = test_labels[0:10]
