@@ -132,9 +132,7 @@ def main():
                 shear_range=0.2,
                 zoom_range=0.2,
                 horizontal_flip=True,
-                validation_split=0.3,
-                rotation_range=5,
-                brightness_range=[0.2,0.8],
+                validation_split=0.3
                 )
 
     train_ds = train_datagen.flow_from_directory(
