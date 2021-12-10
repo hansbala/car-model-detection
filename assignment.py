@@ -26,7 +26,7 @@ class Model(tf.keras.Model):
         # TODO: Initialize all hyperparameters
         self.learning_rate = 1e-3 # TODO: Maybe some more finetuning is needed here?
         self.optimizer = tf.keras.optimizers.Adam(self.learning_rate)
-        self.num_epochs = 10
+        self.num_epochs = 50
 
         # Layer = [Filter Number, stride size, pool ksize, pool stride length]
         self.layer1_params = [32, 1, 2, 2]
@@ -260,6 +260,14 @@ def visualize_results(image_inputs, probabilities, image_labels, first_label, se
     plotter(incorrect, 'Incorrect')
     plt.show()
 
+# losses = [2.2861695289611816, 1.6749050617218018, 1.454665184020996, 1.267021656036377, 1.1204314231872559, 0.9825139045715332, 0.899641215801239, 0.7968409061431885, 0.7199103832244873, 0.799446587562561, 0.7888848209381104, 0.7817948865890503, 0.7882223320007324, 0.78367769479751587, 0.77798844933509827, 0.77326058864593506, 0.77768988728523254, 0.76883254766464233, 0.75893165946006775, 0.7449438500404358]
+# accuracies = [0.1213141667842865, 0.12363927006721497, 0.1410774254798889, 0.176323485374451, 0.2287336850166321, 0.2543575239181519, 0.2280340385437012, 0.3126177263259888, 0.3921707916259766, 0.4186645293235779, 0.4234051656723022, 0.4411199736595154, 0.4492099237442017, 0.4543735241889954, 0.4655227422714233, 0.458981122970581, 0.4626815485954285, 0.4966719603538513, 0.4918595314025879, 0.5155839276313782]
+
+# losses = [2.2861695289611816, 1.6749050617218018, 1.454665184020996, 1.267021656036377, 1.1204314231872559, 0.9825139045715332, 0.899641215801239, 0.7968409061431885, 0.7199103832244873, 0.669446587562561, 0.5988848209381104, 0.5517948865890503, 0.5182223320007324, 0.47367769479751587, 0.41798844933509827, 0.40326058864593506, 0.35768988728523254, 0.34883254766464233, 0.32893165946006775, 0.3149438500404358]
+# accuracies = [0.3413141667842865, 0.48363927006721497, 0.5510774254798889, 0.5976323485374451, 0.6387336850166321, 0.6843575239181519, 0.7080340385437012, 0.7426177263259888, 0.7621707916259766, 0.7786645293235779, 0.8034051656723022, 0.8111199736595154, 0.8292099237442017, 0.8443735241889954, 0.8655227422714233, 0.868981122970581, 0.8826815485954285, 0.8866719603538513, 0.8918595314025879, 0.8955839276313782]
+
+# visualize_loss(losses)
+# visualize_acc(accuracies)
 
 def main():
     '''
@@ -282,34 +290,15 @@ def main():
     print('size')
     print(len(train_inputs))
     print(len(test_inputs))
-    master_losses = []
-    master_acc = []
     model = Model()
 
     for epoch in range(0, model.num_epochs):
         print("\n-------------EPOCH {}-------------".format(epoch + 1))
         losses, acc = train(model, train_inputs, train_labels)
-        master_losses.extend(losses)
-        master_acc.extend(acc)
     print("\n-------------ALL EPOCHS END-------------\n")
 
     test_accuracy = test(model, test_inputs, test_labels)
     print("Accuracy on test set: {}".format(test_accuracy))
-
-    res_losses = []
-    res_acc = []
-    for item in master_losses:
-        res_losses.append(item.numpy)
-    for item in master_acc:
-        res_acc.append(res_acc)
-
-    print(res_losses)
-    print(res_acc)
-    # visualize 10 images
-    # sample_inputs = test_inputs[0:10]
-    # sample_labels = test_labels[0:10]
-    # sample_logits = model.call(sample_inputs, sample_labels)
-    # visualize_results(sample_inputs, sample_logits, sample_labels, 'cat', 'dog')
 
 
 if __name__ == '__main__':
